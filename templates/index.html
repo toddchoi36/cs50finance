@@ -1,0 +1,61 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Index
+{% endblock %}
+
+{% block main %}
+    <form action="/" method="post">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Symbol</th>
+                    <th>Company Name</th>
+                    <th>Shares</th>
+                    <th>Price</th>
+                    <th>Total</th>
+                    <th>
+                        <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                            <label class="btn btn-primary">
+                                <input type="radio" name="options" value="buy" id="option1"> Buy
+                            </label>
+                            <label class="btn btn-primary">
+                                <input type="radio" name="options" value="sell" id="option2"> Sell
+                            </label>
+                        </div>
+                    </th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for row in display_assets %}
+                <tr>
+                    <td>{{ row.Symbol }}</td>
+                    <td>{{ row.CompanyName }}</td>
+                    <td>{{ row.Shares }}</td>
+                    <td>{{ row.Price | usd}}</td>
+                    <td>{{ row.Total | usd}}</td>
+                    <td>
+                        <input autocomplete="off" autofocus class="form-control" name="buy_sell_qty" value="0" placeholder="Qty" type="text" style="width:60px">
+                    </td>
+                </tr>
+                {% endfor %}
+
+                <td>Cash</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td>{{ cash | usd }}</td>
+            </tbody>
+
+            <tfoot>
+                <td style='font-weight: bold;'>GRAND TOTAL</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td style='font-weight: bold;'>{{ grand_total | usd }}</td>
+                <td><button class="btn btn-primary" type="submit">Transact</button></td>
+            </tfoot>
+        </table>
+    </form>
+{% endblock %}
