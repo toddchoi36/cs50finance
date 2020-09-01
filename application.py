@@ -286,7 +286,7 @@ def register():
             return apology("pass should have at least one uppercase letter", 403)
         if not any(char.islower() for char in request.form.get("password")):
             return apology("pass should have at least one lowercase letter", 403)
-        #password confirmation check
+        #password
         if request.form.get("confirm password") != request.form.get("password"):
             return apology("passwords do not match", 403)
 
