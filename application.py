@@ -1,4 +1,4 @@
-import os, sqlalchemy, psycopg2
+import os, sqlalchemy
 
 from cs50 import SQL
 from flask import Flask, flash, jsonify, redirect, render_template, request, session
@@ -33,7 +33,7 @@ app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
 # Configure CS50 Library to use SQLite database
-db = SQL(os.environ.get("sqlite:///finance.db"))
+db = SQL("sqlite:///finance.db")
 
 # Make sure API key is set
 if not os.environ.get("API_KEY"):
@@ -385,7 +385,3 @@ def password_check(passwd):
 for code in default_exceptions:
     app.errorhandler(code)(errorhandler)
 
-
-if __name__ == "__main__":
- port = int(os.environ.get("PORT", 8080))
- app.run(host="0.0.0.0", port=port)
