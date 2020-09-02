@@ -165,7 +165,7 @@ def buy():
 
         return redirect("/")
 
-    return apology("TODO")
+
 
 
 @app.route("/history")
@@ -258,7 +258,7 @@ def quote():
 
 
         return render_template("quoted.html", stock = Stock, quote_num_shares = quote_num_shares, shares = request.form.get("shares"))
-    return apology("TODO")
+
 
 
 @app.route("/register", methods=["GET", "POST"])
@@ -298,7 +298,7 @@ def register():
         else:
             return apology("Username already taken")
 
-    return apology("TODO")
+
 
 
 @app.route("/sell", methods=["GET", "POST"])
@@ -338,7 +338,7 @@ def sell():
             db.execute("UPDATE assets SET Shares = Shares - :new_shares, Price=:Price WHERE userID=:id AND Symbol=:Symbol", new_shares = request.form.get("shares"), id=session["user_id"], Symbol=Symbol, Price=Stock["price"])
             db.execute("INSERT INTO history (user_ID, Symbol, Shares, Price) VALUES(:userID, :Symbol, :Shares, :Price)", userID=session["user_id"], Symbol=Symbol, Shares=0-float(request.form.get("shares")), Price=Stock["price"])
             return redirect("/")
-    return apology("TODO")
+
 
 
 def errorhandler(e):
