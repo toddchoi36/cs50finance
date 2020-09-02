@@ -1,4 +1,4 @@
-import os
+import os, sqlalchemy
 
 from cs50 import SQL
 from flask import Flask, flash, jsonify, redirect, render_template, request, session
@@ -384,3 +384,4 @@ def password_check(passwd):
 # Listen for errors
 for code in default_exceptions:
     app.errorhandler(code)(errorhandler)
+
