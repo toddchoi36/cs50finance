@@ -36,7 +36,7 @@ Session(app)
 
 # Configure postgress
 engine = create_engine(os.getenv("DATABASE_URL"))
-db = scoped_session(sessionmaker(bline=engine))
+db = scoped_session(sessionmaker(bind=engine))
 
 # Make sure API key is set
 if not os.environ.get("API_KEY"):
