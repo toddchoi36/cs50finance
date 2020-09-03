@@ -1,5 +1,7 @@
-import os, sqlalchemy
+import os
 
+from sqlalchemy import create_engine
+from sqlalchemy.orm import scoped_session, sessionmaker
 from cs50 import SQL
 from flask import Flask, flash, jsonify, redirect, render_template, request, session
 from flask_session import Session
@@ -31,8 +33,10 @@ app.config["SESSION_FILE_DIR"] = mkdtemp()
 app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
-# Configure CS50 Library to use SQLite database
-db = SQL("sqlite:///finance.db")
+
+# Configure postgress
+engine = create_engine(os.getenv("DATABASE_URL"))
+db = scoped_session(sessionmaker(bline=engine))
 
 # Make sure API key is set
 if not os.environ.get("API_KEY"):
@@ -85,10 +89,11 @@ def index():
                 if new_cash < 0:
                     return apology("not enough money", 403)
                 db.execute("UPDATE users SET cash =:new_cash WHERE id=:id", new_cash = new_cash, id=session["user_id"])
+                db.commit()
 
                 if buy_share != 0: #only add to history if buy qty is not 0
                     db.execute("INSERT INTO history (user_ID, Symbol, Shares, Price) VALUES(:userID, :Symbol, :buy_share, :Price)", userID=session["user_id"], Symbol=Symbol, buy_share=buy_share, Price=Stock["price"])
-
+                    db.commit()
                 a = a + 1 #increment row
 
             return redirect("/")
@@ -106,18 +111,21 @@ def index():
                 elif Shares == sell_share:
                     db.execute("UPDATE assets SET Shares = Shares - :sell_share, Price=:Price WHERE userID=:id AND Symbol=:symbol", sell_share = sell_share, id=session["user_id"], symbol=Symbol, Price=Stock["price"])
                     db.execute("DELETE FROM assets WHERE userID=:id AND Symbol=:Symbol", id=session["user_id"], Symbol=Symbol)
+                    db.commit()
                 else:
                     db.execute("UPDATE assets SET Shares = Shares - :sell_share, Price=:Price WHERE userID=:id AND Symbol=:symbol", sell_share = sell_share, id=session["user_id"], symbol=Symbol, Price=Stock["price"])
+                    db.commit()
 
                 rows = db.execute("SELECT cash FROM users WHERE id=:id", id=session["user_id"])
                 cash = rows[0]["cash"]
                 new_cash = cash + sell_share * float(Stock["price"])
 
                 db.execute("UPDATE users SET cash =:new_cash WHERE id=:id", new_cash = new_cash, id=session["user_id"])
-
+                db.commit()
                 if sell_share != 0: #only add to history if buy qty is not 0
                     db.execute("INSERT INTO history (user_ID, Symbol, Shares, Price) VALUES(:userID, :Symbol, :sell_share, :Price)", userID=session["user_id"], Symbol=Symbol, sell_share=0-float(sell_share), Price=Stock["price"])
-
+                    db.commit()
+                    
                 a = a + 1 #increment to next row for getlist
 
             return redirect("/")
@@ -153,15 +161,17 @@ def buy():
             return apology("not enough money", 403)
 
         db.execute("UPDATE users SET cash =:new_cash WHERE id=:id", new_cash = new_cash, id=session["user_id"])
+        db.commit()
 
         assetrow = db.execute("SELECT * FROM assets WHERE userID=:userID AND Symbol=:Symbol", userID=session["user_id"], Symbol=Symbol)
         if len(assetrow) == 0: #if not in assets table, then add
             db.execute("INSERT INTO assets(userID, Symbol, CompanyName, Shares, Price) VALUES(:userID, :Symbol, :CompanyName, :Shares, :Price)", userID=session["user_id"], Symbol=Symbol, CompanyName=Stock["name"], Shares=request.form.get("shares"), Price=Stock["price"])
+            db.commit()
         else: #if stock already exsits then update
             db.execute("UPDATE assets SET Shares = Shares + :new_shares, Price=:Price WHERE userID=:id AND Symbol=:symbol", new_shares = request.form.get("shares"), id=session["user_id"], symbol=Symbol, Price=Stock["price"])
-
+            db.commit()
         db.execute("INSERT INTO history (user_ID, Symbol, Shares, Price) VALUES(:userID, :Symbol, :Shares, :Price)", userID=session["user_id"], Symbol=Symbol, Shares=request.form.get("shares"), Price=Stock["price"])
-
+        db.commit()
         return redirect("/")
 
 
@@ -292,6 +302,7 @@ def register():
         username_check = db.execute("SELECT * FROM users WHERE username=:username", username = request.form.get("username"))
         if len(username_check) == 0:
             primary_key = db.execute("INSERT INTO users(username, hash) VALUES(:username, :hash)", username = request.form.get("username"), hash = generate_password_hash(request.form.get("password")))
+            db.commit()
             session["user_id"] = primary_key
             return redirect("/")
         else:
@@ -330,12 +341,14 @@ def sell():
             db.execute("UPDATE users SET cash =:new_cash WHERE id=:id", new_cash = new_cash, id=session["user_id"])
             db.execute("DELETE FROM assets WHERE userID=:id AND Symbol=:Symbol", id=session["user_id"], Symbol=Symbol)
             db.execute("INSERT INTO history (user_ID, Symbol, Shares, Price) VALUES(:userID, :Symbol, :Shares, :Price)", userID=session["user_id"], Symbol=Symbol, Shares=0-float(request.form.get("shares")), Price=Stock["price"])
+            db.commit()
             return redirect("/")
         else:
             new_cash = cash + float(request.form.get("shares")) * float(Stock["price"]) #if not selling last share, then update Shares Column
             db.execute("UPDATE users SET cash =:new_cash WHERE id=:id", new_cash = new_cash, id=session["user_id"])
             db.execute("UPDATE assets SET Shares = Shares - :new_shares, Price=:Price WHERE userID=:id AND Symbol=:Symbol", new_shares = request.form.get("shares"), id=session["user_id"], Symbol=Symbol, Price=Stock["price"])
             db.execute("INSERT INTO history (user_ID, Symbol, Shares, Price) VALUES(:userID, :Symbol, :Shares, :Price)", userID=session["user_id"], Symbol=Symbol, Shares=0-float(request.form.get("shares")), Price=Stock["price"])
+            db.commit()
             return redirect("/")
 
 
@@ -383,3 +396,5 @@ def password_check(passwd):
 for code in default_exceptions:
     app.errorhandler(code)(errorhandler)
 
+if __name__ == "__main__":
+    main()
