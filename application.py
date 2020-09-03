@@ -287,16 +287,16 @@ def register():
             return apology("must provide password", 403)
 
         #password req check
-        if len(request.form.get("password")) < 6:
-            return apology("pass length should be at least 6 char", 403)
-        if len(request.form.get("password")) > 20:
-            return apology("pass length should not be greater than 19 char", 403)
-        if not any(char.isdigit() for char in request.form.get("password")):
-            return apology("pass should have at least one number", 403)
-        if not any(char.isupper() for char in request.form.get("password")):
-            return apology("pass should have at least one uppercase letter", 403)
-        if not any(char.islower() for char in request.form.get("password")):
-            return apology("pass should have at least one lowercase letter", 403)
+        #if len(request.form.get("password")) < 6:
+        #    return apology("pass length should be at least 6 char", 403)
+        #if len(request.form.get("password")) > 20:
+        #    return apology("pass length should not be greater than 19 char", 403)
+        #if not any(char.isdigit() for char in request.form.get("password")):
+        #    return apology("pass should have at least one number", 403)
+        #if not any(char.isupper() for char in request.form.get("password")):
+        #    return apology("pass should have at least one uppercase letter", 403)
+        #if not any(char.islower() for char in request.form.get("password")):
+        #    return apology("pass should have at least one lowercase letter", 403)
         #password
         if request.form.get("confirm password") != request.form.get("password"):
             return apology("passwords do not match", 403)
@@ -362,36 +362,36 @@ def errorhandler(e):
     return apology(e.name, e.code)
 
 # Function to validate the password
-def password_check(passwd):
+#def password_check(passwd):
 
-    SpecialSym =['$', '@', '#', '%']
-    val = True
+    #SpecialSym =['$', '@', '#', '%']
+    #val = True
 
-    if len(passwd) < 6:
-        print('length should be at least 6')
-        val = False
+    #if len(passwd) < 6:
+    #    print('length should be at least 6')
+    #    val = False
 
-    if len(passwd) > 20:
-        print('length should be not be greater than 8')
-        val = False
+    #if len(passwd) > 20:
+    #    print('length should be not be greater than 8')
+    #    val = False
 
-    if not any(char.isdigit() for char in passwd):
-        print('Password should have at least one numeral')
-        val = False
+    #if not any(char.isdigit() for char in passwd):
+    #    print('Password should have at least one numeral')
+    #    val = False
 
-    if not any(char.isupper() for char in passwd):
-        print('Password should have at least one uppercase letter')
-        val = False
+    #if not any(char.isupper() for char in passwd):
+    #    print('Password should have at least one uppercase letter')
+    #    val = False
 
-    if not any(char.islower() for char in passwd):
-        print('Password should have at least one lowercase letter')
-        val = False
+    #if not any(char.islower() for char in passwd):
+    #    print('Password should have at least one lowercase letter')
+    #   val = False
 
-    if not any(char in SpecialSym for char in passwd):
-        print('Password should have at least one of the symbols $@#')
-        val = False
-    if val:
-        return val
+    #if not any(char in SpecialSym for char in passwd):
+    #    print('Password should have at least one of the symbols $@#')
+    #    val = False
+    #if val:
+    #    return val
 
 
 # Listen for errors
