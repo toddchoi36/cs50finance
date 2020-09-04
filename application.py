@@ -303,9 +303,9 @@ def register():
 
         username_check = db.execute("SELECT * FROM users WHERE username=:username", username = request.form.get("username"))
         if len(username_check) == 0:
-            primary_key = db.execute("INSERT INTO users(username, hash) VALUES(:username, :hash)", username = request.form.get("username"), hash = generate_password_hash(request.form.get("password")))
-            db.commit()
+            primary_key = db.execute("INSERT INTO users(username, hash) VALUES(:username, :hash)", username = request.form.get("username"), hash = generate_password_hash(request.form.get("password")))        
             session["user_id"] = primary_key
+            db.commit()
             return redirect("/")
         else:
             return apology("Username already taken")
