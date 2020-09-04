@@ -300,12 +300,15 @@ def register():
         #password
         if request.form.get("confirm password") != request.form.get("password"):
             return apology("passwords do not match", 403)
-
-        username_check = db.execute("SELECT * FROM users WHERE username=:username", username = request.form.get("username"))
-        if len(username_check) == 0:
-            primary_key = db.execute("INSERT INTO users(username, hash) VALUES(:username, :hash)", username = request.form.get("username"), hash = generate_password_hash(request.form.get("password")))        
+            
+        username = request.form.get("username")
+        hash = generate_password_hash(request.form.get("password")
+        if db.session.query(users).where(users.username=:username) == 0:
+            new_user = users(username, password)
+            db.session.add(new_user, hash)
+            db.session.commit()      
             session["user_id"] = primary_key
-            db.commit()
+            
             return redirect("/")
         else:
             return apology("Username already taken")
