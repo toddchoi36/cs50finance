@@ -303,7 +303,7 @@ def register():
             
         username = request.form.get("username")
         hash = generate_password_hash(request.form.get("password")
-        if db.session.query(users).where(users.username=:username) == 0:
+        if db.session.query(users).where(users.username=username).count() == 0:
             new_user = users(username, password)
             db.session.add(new_user, hash)
             db.session.commit()      
