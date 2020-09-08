@@ -12,17 +12,6 @@ from werkzeug.security import check_password_hash, generate_password_hash
 
 from helpers import apology, login_required, lookup, usd
 
-import urllib.parse
-import psycopg2
-urllib.parse.uses_netloc.append("postgres")
-url = urllib.parse.urlparse("postgres://irqjtbltuuzxab:863ef9dfabdd7b888bc861b52d6c2bf5345dc71bafdcd5f9704b7303dbf7241b@ec2-52-23-86-208.compute-1.amazonaws.com:5432/d7smhfkgvqn5e6")
-conn = psycopg2.connect(
- database=url.path[1:],
- user=url.username,
- password=url.password,
- host=url.hostname,
- port=url.port
-)
 
 # Configure application
 app = Flask(__name__)
