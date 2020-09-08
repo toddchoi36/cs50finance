@@ -300,9 +300,15 @@ def register():
         #password
         if request.form.get("confirm password") != request.form.get("password"):
             return apology("passwords do not match", 403)
-
-        username = request.form.get("username")
-        password = generate_password_hash(request.form.get("password")
+        try:
+            username = request.form.get("username")
+        except ValueError:
+            print("An exception occurred")
+        
+        try:
+            password = request.form.get("password")
+        except ValueError:
+            print("An exception occurred")
 
         if db.execute("SELECT id FROM users WHERE username=:username", {"username": username}).rowcount == 0:
             primary_key = db.execute("INSERT INTO users(username, hash) VALUES(:username, :hash)", {"username": username, "hash": password})        
