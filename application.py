@@ -306,7 +306,10 @@ def register():
 
 
         if db.execute("SELECT id FROM users WHERE username=:username", {"username": username}).rowcount == 0:
-            return apology("duuuuuuuuuuuude")
+            primary_key = db.execute("INSERT INTO users(username, hash) VALUES(:username, :hash)", {"username": username, "hash": password})        
+            session["user_id"] = primary_key["id"]
+            db.commit()
+            return apology("check the tables")
         else:
             return apology("Username already taken")
 
