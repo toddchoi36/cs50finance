@@ -300,15 +300,11 @@ def register():
         #password
         if request.form.get("confirm password") != request.form.get("password"):
             return apology("passwords do not match", 403)
-        try:
-            username = request.form.get("username")
-        except ValueError:
-            print("An exception occurred")
-        
-        try:
-            password = request.form.get("password")
-        except ValueError:
-            print("An exception occurred")
+
+        username = request.form.get("username")
+
+        password = request.form.get("password")
+
 
         if db.execute("SELECT id FROM users WHERE username=:username", {"username": username}).rowcount == 0:
             return render_template("login.html")
