@@ -15,7 +15,7 @@ from helpers import apology, login_required, lookup, usd
 import urllib.parse
 import psycopg2
 urllib.parse.uses_netloc.append("postgres")
-url = urllib.parse.urlparse(os.environ["DATABASE_URL"])
+url = urllib.parse.urlparse("postgres://irqjtbltuuzxab:863ef9dfabdd7b888bc861b52d6c2bf5345dc71bafdcd5f9704b7303dbf7241b@ec2-52-23-86-208.compute-1.amazonaws.com:5432/d7smhfkgvqn5e6")
 conn = psycopg2.connect(
  database=url.path[1:],
  user=url.username,
@@ -48,7 +48,7 @@ app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
 # Configure postgress
-engine = create_engine(os.getenv("DATABASE_URL"))
+engine = create_engine("postgres://irqjtbltuuzxab:863ef9dfabdd7b888bc861b52d6c2bf5345dc71bafdcd5f9704b7303dbf7241b@ec2-52-23-86-208.compute-1.amazonaws.com:5432/d7smhfkgvqn5e6")
 db = scoped_session(sessionmaker(bind=engine))
 
 # Make sure API key is set
