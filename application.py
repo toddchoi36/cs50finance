@@ -299,11 +299,9 @@ def register():
         #password
         if request.form.get("confirm password") != request.form.get("password"):
             return apology("passwords do not match", 403)
-        
-        username = request.form.get("username")  
-        password = generate_password_hash(request.form.get("password"))
+    
 
-        db.execute("INSERT INTO users (username, hash) VALUES(:username, :hash)", {"username": username, "hash": password})
+        db.execute("INSERT INTO users (username, hash) VALUES(:username, :hash)", {"username": request.form.get("username"), "hash": generate_password_hash(request.form.get("password"))})
         db.commit()
         return render_template("login.html")
 
