@@ -304,8 +304,6 @@ def register():
         username = request.form.get("username")  
         password = generate_password_hash(request.form.get("password"))
 
-        db.execute("INSERT INTO users(username, hash) VALUES(:username, :hash)", {"username": username, "hash": password})        
-        db.commit()
         return render_template("login.html")
 
 
