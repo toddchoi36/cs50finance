@@ -304,6 +304,9 @@ def register():
         username = request.form.get("username")  
         password = generate_password_hash(request.form.get("password"))
 
+        primary_key = users(username, password)
+        db.session.add(primary_key)
+        db.session.commit()
         return render_template("login.html")
 
 
