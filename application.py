@@ -1,8 +1,8 @@
 import os
-import sqlalchemy
+
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
-from cs50 import SQL
+
 from flask import Flask, flash, jsonify, redirect, render_template, request, session
 from flask_session import Session
 from tempfile import mkdtemp
@@ -41,7 +41,7 @@ db = scoped_session(sessionmaker(bind=engine))
 
 # Make sure API key is set
 if not os.environ.get("API_KEY"):
-   raise RuntimeError("API_KEY not set")
+    raise RuntimeError("API_KEY not set")
 
 
 @app.route("/", methods=["GET", "POST"])
@@ -299,11 +299,18 @@ def register():
         #password
         if request.form.get("confirm password") != request.form.get("password"):
             return apology("passwords do not match", 403)
-    
+        
+        username = request.form.get("username")  
+        password = generate_password_hash(request.form.get("password"))
 
-        db.execute("INSERT INTO users (username, hash) VALUES (:username, :hash)", {"username": request.form.get("username"), "hash": generate_password_hash(request.form.get("password"))})
-        db.commit()
-        return render_template("register.html")
+        if db.execute("SELECT * FROM users WHERE username =:username", {"username": username,}).rowcount == 0:
+            primary_key = db.execute("INSERT INTO users(username, hash) VALUES(:username, :hash)", {"username": username, "hash": password})
+            session["user_id"] = primary_key
+            db.session.commit()
+            return render_template("login.html")
+        else:
+            return apology("Username already taken")
+        
 
 
 
@@ -394,6 +401,3 @@ for code in default_exceptions:
     app.errorhandler(code)(errorhandler)
 
 
-if __name__ == '__main__':
-    app.debug = True
-    app.run()
