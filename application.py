@@ -1,5 +1,4 @@
 import os
-import sqlalchemy
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
@@ -396,3 +395,9 @@ def errorhandler(e):
 # Listen for errors
 for code in default_exceptions:
     app.errorhandler(code)(errorhandler)
+
+if __name__ =='__main__':
+    app.debug = True
+    app.run()
+
+    
