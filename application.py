@@ -306,7 +306,7 @@ def register():
         if db.execute("SELECT username FROM users WHERE username =:username", {"username": username}).rowcount == 0:
             primary_key = db.execute("INSERT INTO users(username, hash) VALUES(:username, :hash)", {"username": username, "hash": password})
             db.commit()
-            session["user_id"] = primary_key
+            session["user_id"] = primary_key[0]["id"]
             return render_template("login.html")
         else:
             return apology("Username already taken")
