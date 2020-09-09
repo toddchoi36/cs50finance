@@ -303,9 +303,8 @@ def register():
         username = request.form.get("username")  
         password = generate_password_hash(request.form.get("password"))
 
-        primary_key = users(username, password)
-        db.session.add(primary_key)
-        db.session.commit()
+        db.execute("INSERT INTO users (username, hash) VALUES(:username, :hash)", {"username": username, "hash": password})
+        db.commit()
         return render_template("login.html")
 
 
@@ -396,8 +395,4 @@ def errorhandler(e):
 for code in default_exceptions:
     app.errorhandler(code)(errorhandler)
 
-if __name__ =='__main__':
-    app.debug = True
-    app.run()
 
-    
