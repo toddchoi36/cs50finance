@@ -312,10 +312,9 @@ def register():
         user = db.execute("SELECT id FROM users WHERE username =:username", {"username": username})
         db.commit
         if session["user_id"] == null:
-            session["user_id"] = user
+            session["user_id"] = user[0]["id"]
 
-        return apology("ffffff")
-
+        return render_template("register.html")
 @app.route("/sell", methods=["GET", "POST"])
 @login_required
 def sell():
