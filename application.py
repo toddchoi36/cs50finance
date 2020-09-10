@@ -228,7 +228,7 @@ def login():
         
 
         # Redirect user to home page
-        return render_template("login.html")
+        return apology("boop", 403)
 
     # User reached route via GET (as by clicking a link or via redirect)
     else:
