@@ -305,8 +305,9 @@ def register():
 
         if db.execute("SELECT username FROM users WHERE username =:username", {"username": username}).rowcount == 0:
             primary_key = db.execute("INSERT INTO users(username, hash) VALUES(:username, :hash)", {"username": username, "hash": password})
-            user = db.execute("SELECT id FROM users WHERE username =:username", {"username": username})
             db.commit()
+            user = db.execute("SELECT id FROM users WHERE username =:username", {"username": username})
+            
             session["user_id"] = user[0]["id"]
             return redirect("/")
         else:
