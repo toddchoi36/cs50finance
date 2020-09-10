@@ -309,7 +309,7 @@ def register():
             user = db.execute("SELECT id FROM users WHERE username =:username", {"username": username})
             
             session["user_id"] = user[0]["id"]
-            return redirect("/")
+            return apology("wtf")
         else:
             return apology("Username already taken")
         
