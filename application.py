@@ -29,15 +29,17 @@ def after_request(response):
 # Custom filter
 app.jinja_env.filters["usd"] = usd
 
-# Configure session to use filesystem (instead of signed cookies)
 
-app.config["SESSION_PERMANENT"] = False
-app.config["SESSION_TYPE"] = "filesystem"
-Session(app)
 
 # Configure postgress
 engine = create_engine("postgres://irqjtbltuuzxab:863ef9dfabdd7b888bc861b52d6c2bf5345dc71bafdcd5f9704b7303dbf7241b@ec2-52-23-86-208.compute-1.amazonaws.com:5432/d7smhfkgvqn5e6")
 db = scoped_session(sessionmaker(bind=engine))
+
+# Configure session to use filesystem (instead of signed cookies)
+
+app.config["SESSION_PERMANENT"] = False
+app.config["SESSION_TYPE"] = "filesystem"
+
 
 # Make sure API key is set
 if not os.environ.get("API_KEY"):
@@ -214,9 +216,11 @@ def login():
         elif not request.form.get("password"):
             return apology("must provide password", 403)
 
+        username = request.form.get("username") 
+
         # Query database for username
         rows = db.execute("SELECT * FROM users WHERE username = :username",
-                        {"username": request.form.get("username")})
+                        {"username": username})
 
         # Ensure username exists and password is correct
         if len(rows) != 1 or not check_password_hash(rows[0]["hash"], request.form.get("password")):
