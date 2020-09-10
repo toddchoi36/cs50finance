@@ -30,7 +30,6 @@ def after_request(response):
 app.jinja_env.filters["usd"] = usd
 
 # Configure session to use filesystem (instead of signed cookies)
-
 app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
@@ -214,21 +213,19 @@ def login():
         elif not request.form.get("password"):
             return apology("must provide password", 403)
 
-        username = request.form.get("username") 
-        
         # Query database for username
         rows = db.execute("SELECT * FROM users WHERE username = :username",
-                        {"username": username})
+                        username=request.form.get("username"))
 
         # Ensure username exists and password is correct
         if len(rows) != 1 or not check_password_hash(rows[0]["hash"], request.form.get("password")):
             return apology("invalid username and/or password", 403)
 
         # Remember which user has logged in
-        
+        session["user_id"] = rows[0]["id"]
 
         # Redirect user to home page
-        return apology("boop", 403)
+        return redirect("/")
 
     # User reached route via GET (as by clicking a link or via redirect)
     else:
@@ -306,8 +303,9 @@ def register():
         password = generate_password_hash(request.form.get("password"))
 
         if db.execute("SELECT username FROM users WHERE username =:username", {"username": username}).rowcount == 0:
-            db.execute("INSERT INTO users(username, hash) VALUES(:username, :hash)", {"username": username, "hash": password})
-            db.commit()
+            new_user = users(username, hash)
+            db.session.add(new_user)
+            db.session.commit
         else:
             return apology("Username already taken")
         
