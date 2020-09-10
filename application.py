@@ -311,8 +311,7 @@ def register():
         
         user = db.execute("SELECT id FROM users WHERE username =:username", {"username": username})
         db.commit
-        id = user[0]["id"]
-        session["user_id"] = id
+
         return render_template("login.html")
 
 @app.route("/sell", methods=["GET", "POST"])
