@@ -309,13 +309,11 @@ def register():
         else:
             return apology("Username already taken")
         
-        if "user_id" not in session:
-            session["user_id"] = []
-
         user = db.execute("SELECT id FROM users WHERE username =:username", {"username": username})
         db.commit
-        
-        session["user_id"] = user
+        if session["user_id"] == null:
+            session["user_id"] = user
+
         return apology("ffffff")
 
 @app.route("/sell", methods=["GET", "POST"])
