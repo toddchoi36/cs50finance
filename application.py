@@ -51,8 +51,8 @@ def index():
     """Show portfolio of stocks"""
     if request.method == "GET":
         assets = db.execute("SELECT * FROM assets WHERE userid =:userID ORDER BY symbol", {"userID": session["user_id"]}).fetchall
-        user_cash = db.execute("SELECT cash FROM users WHERE id =:id", {"id": session["user_id"]})
-        cash = user_cash[1]['cash']
+        user_cash = db.execute("SELECT cash FROM users WHERE id =:id", {"id": session["user_id"]}).fetchall
+        cash = user_cash[0]['cash']
 
         display_assets = []
         shares_total = 0
