@@ -311,10 +311,10 @@ def register():
             return apology("Username already taken")
         
 
-        user = db.execute("SELECT id FROM users WHERE username =:username", {"username": username})
+        user = db.execute("SELECT id FROM users WHERE username =:username", {"username": username}).fetchall
         db.commit
 
-        session['user_id'] = user[0]
+        session['user_id'] = user['id']
         
 
         return render_template("register.html")
