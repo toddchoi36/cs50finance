@@ -50,9 +50,9 @@ if not os.environ.get("API_KEY"):
 def index():
     """Show portfolio of stocks"""
     if request.method == "GET":
-        assets = db.execute("SELECT * FROM assets WHERE userid =:userID ORDER BY symbol", {"userID": session["user_id"]}).fetchall
-        user_cash = db.execute("SELECT cash FROM users WHERE id =:id", {"id": session["user_id"]}).fetchall
-        cash = user_cash.first()[0]
+        assets = db.execute("SELECT * FROM assets WHERE userid =:userID ORDER BY symbol", {"userID": session["user_id"]}).fetchall()
+        user_cash = db.execute("SELECT cash FROM users WHERE id =:id", {"id": session["user_id"]})
+        cash = user_cash.fetchall()
 
         display_assets = []
         shares_total = 0
