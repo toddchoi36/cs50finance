@@ -314,7 +314,7 @@ def register():
         user = db.execute("SELECT id FROM users WHERE username =:username", {"username": username})
         db.commit
 
-        session['user_id'] = "z"
+        session['user_id'] = user
         
 
         return render_template("register.html")
