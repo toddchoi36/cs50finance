@@ -1,10 +1,11 @@
-import os
+import os, sqlalchemy
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
 from cs50 import SQL
 from flask import Flask, flash, jsonify, redirect, render_template, request, session
 from flask_session import Session
+from flask_login import login_user
 from tempfile import mkdtemp
 from werkzeug.exceptions import default_exceptions, HTTPException, InternalServerError
 from werkzeug.security import check_password_hash, generate_password_hash
@@ -307,13 +308,13 @@ def register():
         if db.execute("SELECT username FROM users WHERE username =:username", {"username": username}).rowcount == 0:
             db.execute("INSERT INTO users(username, hash) VALUES(:username, :hash)", {"username": username, "hash": password})
             db.commit()
+            user = db.execute("SELECT id FROM users WHERE username =:username", {"username": username})
+            db.commit
+            login_user(user[0]["id"])
         else:
             return apology("Username already taken")
         
-        user = db.execute("SELECT id FROM users WHERE username =:username", {"username": username})
-        db.commit
 
-        db.session['user_id'] = user["id"]
         
 
         return render_template("register.html")
