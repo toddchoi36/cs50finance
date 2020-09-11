@@ -30,6 +30,7 @@ def after_request(response):
 app.jinja_env.filters["usd"] = usd
 
 # Configure session to use filesystem (instead of signed cookies)
+app.config["SESSION_FILE_DIR"] = mkdtemp()
 app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
@@ -303,15 +304,15 @@ def register():
         password = generate_password_hash(request.form.get("password"))
 
         if db.execute("SELECT username FROM users WHERE username =:username", {"username": username}).rowcount == 0:
-            new_user = users(username, password)
-            db.session.add(new_user)
-            db.session.commit
+            db.execute("INSERT INTO users(username, hash) VALUES(:username, :hash)", {"username": username, "hash": password})
+            db.commit()
         else:
             return apology("Username already taken")
         
         user = db.execute("SELECT id FROM users WHERE username =:username", {"username": username})
         db.commit
-
+        if session['user_id'] == null:
+            session['user_id'] = user[0]["id"]
 
         return render_template("register.html")
 @app.route("/sell", methods=["GET", "POST"])
