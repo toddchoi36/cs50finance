@@ -311,8 +311,9 @@ def register():
         
         user = db.execute("SELECT id FROM users WHERE username =:username", {"username": username})
         db.commit
-        if session['user_id'] == null:
-            session['user_id'] = user[0]["id"]
+
+        userID = db.session.add(user)
+        db.session.commit()
 
         return render_template("register.html")
 @app.route("/sell", methods=["GET", "POST"])
