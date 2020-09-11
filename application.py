@@ -307,16 +307,17 @@ def register():
         if db.execute("SELECT username FROM users WHERE username =:username", {"username": username}).rowcount == 0:
             db.execute("INSERT INTO users(username, hash) VALUES(:username, :hash)", {"username": username, "hash": password})
             db.commit()
+            
+            user = db.execute("SELECT id FROM users WHERE username =:username", {"username": username}).fetchall
+            db.commit
+            session['user_id'] = 'a'
+            
+            return redirect("/")
         else:
             return apology("Username already taken")
         
 
-        user = db.execute("SELECT id FROM users WHERE username =:username", {"username": username}).fetchall
-        db.commit
-        session['user_id'] = 'a'
-        
 
-        return render_template("register.html")
 @app.route("/sell", methods=["GET", "POST"])
 @login_required
 def sell():
