@@ -14,6 +14,7 @@ from helpers import apology, login_required, lookup, usd
 
 # Configure application
 app = Flask(__name__)
+app.secret_key ='12345'
 
 # Ensure templates are auto-reloaded
 app.config["TEMPLATES_AUTO_RELOAD"] = True
@@ -312,8 +313,8 @@ def register():
         user = db.execute("SELECT id FROM users WHERE username =:username", {"username": username})
         db.commit
 
-        session['user'] = username
-        db.session.commit()
+        session['user_id'] = user["id"]
+        
 
         return render_template("register.html")
 @app.route("/sell", methods=["GET", "POST"])
