@@ -52,7 +52,7 @@ def index():
     if request.method == "GET":
         assets = db.execute("SELECT * FROM assets WHERE userid =:userID ORDER BY symbol", {"userID": session["user_id"]}).fetchall
         user_cash = db.execute("SELECT cash FROM users WHERE id =:id", {"id": session["user_id"]}).fetchall
-        cash = user_cash[0]['cash']
+        cash = user_cash.first()[0]
 
         display_assets = []
         shares_total = 0
@@ -310,7 +310,7 @@ def register():
             
             user = db.execute("SELECT id FROM users WHERE username =:username", {"username": username}).fetchall
             db.commit
-            session['user_id'] = "55"
+            session["user_id"] = "55"
             
             return redirect("/")
         else:
