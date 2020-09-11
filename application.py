@@ -310,15 +310,10 @@ def register():
         else:
             return apology("Username already taken")
         
-        user = User(
-            name = username,
-            admin = True,
-            expert = False
-        )
+        user = db.execute("SELECT id FROM users WHERE username =:username", {"username": username})
+        db.commit
 
-        db.session.add(user)
-        db.session.commit()
-
+        db.session['user_id'] = user["id"]
         
 
         return render_template("register.html")
