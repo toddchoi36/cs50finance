@@ -310,7 +310,7 @@ def register():
             
             user = db.execute("SELECT id FROM users WHERE username =:username", {"username": username}).fetchone()
             db.commit
-            session["user_id"] = user[0]['id']
+            session["user_id"] = str(user[0]['id'])
             
             return redirect("/")
         else:
