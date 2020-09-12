@@ -308,9 +308,9 @@ def register():
             db.execute("INSERT INTO users(username, hash) VALUES(:username, :hash)", {"username": username, "hash": password})
             db.commit()
             
-            user = db.execute("SELECT id FROM users WHERE username =:username", {"username": username}).fetchall
+            user = db.execute("SELECT id FROM users WHERE username =:username", {"username": username}).fetchone()
             db.commit
-            session["user_id"] = user
+            session["user_id"] = user.fetchone()[0]
             
             return redirect("/")
         else:
