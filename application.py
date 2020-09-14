@@ -166,7 +166,7 @@ def buy():
         db.execute("UPDATE users SET cash =:new_cash WHERE id=:id", {"new_cash": new_cash, "id": session["user_id"]})
         db.commit()
 
-        assetrow = db.execute("SELECT * FROM assets WHERE userID=:userID AND Symbol=:Symbol", {"userID": session["user_id"], "Symbol": Symbol)
+        assetrow = db.execute("SELECT * FROM assets WHERE userID=:userID AND Symbol=:Symbol", {"userID": session["user_id"], "Symbol": Symbol})
         if len(assetrow) == 0: #if not in assets table, then add
             db.execute("INSERT INTO assets(userID, Symbol, CompanyName, Shares, Price) VALUES(:userID, :Symbol, :CompanyName, :Shares, :Price)", {"userID": session["user_id"], "Symbol": Symbol, "CompanyName": Stock["name"], "Shares": request.form.get("shares"), "Price":Stock["price"]})
             db.commit()
