@@ -306,11 +306,11 @@ def register():
         password = generate_password_hash(request.form.get("password"))
 
         if db.execute("SELECT * FROM users WHERE username =:username", {"username": username}).rowcount == 0:
-            db.execute("INSERT INTO users(username, hash) VALUES(:username, :hash)", {"username": username, "hash": password})
+            user = db.execute("INSERT INTO users(username, hash) VALUES(:username, :hash)", {"username": username, "hash": password})
             db.commit()
             
-            user = db.execute("SELECT id FROM users WHERE username =:username", {"username": username}).fetchone()
-            session["user_id"] = ''.join(str(user))
+            
+            session["user_id"] = user
             
             return redirect("/")
         else:
