@@ -156,24 +156,24 @@ def buy():
         if Stock == None:
             return apology("That Stock Symbol does not exist", 403)
 
-        rows = db.execute("SELECT cash FROM users WHERE id=:id", {"id": session["user_id"]).fetchall
+        rows = db.execute("SELECT cash FROM users WHERE id=:id", {"id": session["user_id"]}).fetchall
 
         cash = rows[0]["cash"]
         new_cash = cash - float(request.form.get("shares")) * float(Stock["price"])
         if new_cash < 0:
             return apology("not enough money", 403)
 
-        db.execute("UPDATE users SET cash =:new_cash WHERE id=:id", {"new_cash" = new_cash, "id"=session["user_id"]})
+        db.execute("UPDATE users SET cash =:new_cash WHERE id=:id", {"new_cash": new_cash, "id": session["user_id"]})
         db.commit()
 
-        assetrow = db.execute("SELECT * FROM assets WHERE userID=:userID AND Symbol=:Symbol", userID=session["user_id"], Symbol=Symbol)
+        assetrow = db.execute("SELECT * FROM assets WHERE userID=:userID AND Symbol=:Symbol", {"userID": session["user_id"], "Symbol": Symbol)
         if len(assetrow) == 0: #if not in assets table, then add
-            db.execute("INSERT INTO assets(userID, Symbol, CompanyName, Shares, Price) VALUES(:userID, :Symbol, :CompanyName, :Shares, :Price)", userID=session["user_id"], Symbol=Symbol, CompanyName=Stock["name"], Shares=request.form.get("shares"), Price=Stock["price"])
+            db.execute("INSERT INTO assets(userID, Symbol, CompanyName, Shares, Price) VALUES(:userID, :Symbol, :CompanyName, :Shares, :Price)", {"userID": session["user_id"], "Symbol": Symbol, "CompanyName": Stock["name"], "Shares": request.form.get("shares"), "Price":Stock["price"]})
             db.commit()
         else: #if stock already exsits then update
-            db.execute("UPDATE assets SET Shares = Shares + :new_shares, Price=:Price WHERE userID=:id AND Symbol=:symbol", new_shares = request.form.get("shares"), id=session["user_id"], symbol=Symbol, Price=Stock["price"])
+            db.execute("UPDATE assets SET Shares = Shares + :new_shares, Price=:Price WHERE userID=:id AND Symbol=:symbol", {"new_shares": request.form.get("shares"), "id": session["user_id"], "symbol": Symbol, "Price": Stock["price"]})
             db.commit()
-        db.execute("INSERT INTO history (user_ID, Symbol, Shares, Price) VALUES(:userID, :Symbol, :Shares, :Price)", userID=session["user_id"], Symbol=Symbol, Shares=request.form.get("shares"), Price=Stock["price"])
+        db.execute("INSERT INTO history (user_ID, Symbol, Shares, Price) VALUES(:userID, :Symbol, :Shares, :Price)", {"userID": session["user_id"], "Symbol": Symbol, "Shares": request.form.get("shares"), "Price": Stock["price"]})
         db.commit()
         return redirect("/")
 
