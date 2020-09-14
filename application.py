@@ -309,8 +309,10 @@ def register():
             db.execute("INSERT INTO users(username, hash) VALUES(:username, :hash)", {"username": username, "hash": password})
             db.commit()
             
-            user = db.execute("SELECT REPLACE(id, ',','') FROM users WHERE username =:username", {"username": username}).fetchone()
-            session["user_id"] = ''.join(str(user))
+            user = db.execute("SELECT id FROM users WHERE username =:username", {"username": username}).fetchone()
+            db.commit
+            sessionid = int(''.join(map(str, user)))
+            session["user_id"] = str(sessionid)
             
             return redirect("/")
         else:
