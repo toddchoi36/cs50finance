@@ -221,8 +221,9 @@ def login():
                         {"username":request.form.get("username")})
 
         # Ensure username exists and password is correct
-        if len(rows) != 1 or not check_password_hash(rows[0]["hash"], request.form.get("password")):
-            return apology("invalid username and/or password", 403)
+        if db.execute("SELECT * FROM users WHERE username = :username", {"username":request.form.get("username")}).rowcount != 1:
+            if check_password_hash(rows[0]["hash"], request.form.get("password")):
+                return apology("invalid username and/or password", 403)
 
         # Remember which user has logged in
         session["user_id"] = rows[0]["id"]
@@ -311,7 +312,7 @@ def register():
             
             user = db.execute("SELECT id FROM users WHERE username =:username", {"username": username}).fetchone()
             db.commit
-            sessionid = int(''.join(map(str, user)))
+            sessionid = (''.join(map(str, user)))
             session["user_id"] = sessionid
             
             return redirect("/")
