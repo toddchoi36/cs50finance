@@ -60,10 +60,10 @@ def index():
         hope = request.form.getlist('hope[]')
 
         for row in assets:
-            Symbol = row["Symbol"]
+            Symbol = row["symbol"]
             Stock = lookup(Symbol) #create dictionary to look up current price for Price column
-            Name = row["CompanyName"]
-            Shares = row["Shares"]
+            Name = row["companyname"]
+            Shares = row["shares"]
             Price = float(Stock["price"])
             Total = float(Shares)*Price #Total column of table for each stock
             shares_total = shares_total + Total #total of all shares in the table... to be added with cash to generate grand total
