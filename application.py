@@ -156,7 +156,7 @@ def buy():
         if Stock == None:
             return apology("That Stock Symbol does not exist", 403)
 
-        rows = db.execute("SELECT cash FROM users WHERE id=:id", id=session["user_id"])
+        rows = db.execute("SELECT cash FROM users WHERE id=:id", id=session["user_id"]).fetchall
 
         cash = rows[0]["cash"]
         new_cash = cash - float(request.form.get("shares")) * float(Stock["price"])
