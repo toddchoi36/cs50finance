@@ -168,7 +168,7 @@ def buy():
         db.commit()
 
         assetrow = db.execute("SELECT * FROM assets WHERE userID=:userID AND Symbol=:Symbol", {"userID": session["user_id"], "Symbol": Symbol})
-        if assetrow.rowcount() == 0: #if not in assets table, then add
+        if assetrow.rowcount == 0: #if not in assets table, then add
             db.execute("INSERT INTO assets(userID, Symbol, CompanyName, Shares, Price) VALUES(:userID, :Symbol, :CompanyName, :Shares, :Price)", {"userID": session["user_id"], "Symbol": Symbol, "CompanyName": Stock["name"], "Shares": request.form.get("shares"), "Price":Stock["price"]})
             db.commit()
         else: #if stock already exsits then update
