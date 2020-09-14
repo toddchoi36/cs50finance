@@ -157,8 +157,9 @@ def buy():
             return apology("That Stock Symbol does not exist", 403)
 
         rows = db.execute("SELECT cash FROM users WHERE id=:id", {"id": session["user_id"]}).fetchall
-
-        cash = rows[0]["cash"]
+        for row in user_cash:
+            cash = row[0]
+        
         new_cash = cash - float(request.form.get("shares")) * float(Stock["price"])
         if new_cash < 0:
             return apology("not enough money", 403)
