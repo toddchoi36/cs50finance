@@ -52,7 +52,7 @@ def index():
     if request.method == "GET":
         assets = db.execute("SELECT * FROM assets WHERE userid =:userID ORDER BY symbol", {"userID": session["user_id"]}).fetchall()
         user_cash = db.execute("SELECT cash FROM users WHERE id =:id", {"id": session["user_id"]}).fetchall()
-        cash = ''.join(user_cash)
+        
 
         display_assets = []
         shares_total = 0
@@ -68,8 +68,8 @@ def index():
             shares_total = shares_total + Total #total of all shares in the table... to be added with cash to generate grand total
             display_assets.append({'Symbol':Symbol, 'CompanyName':Name, 'Shares':Shares, 'Price':Price, 'Total':Total})
 
-        grand_total = shares_total + int(cash)
-        return render_template("index.html", display_assets=display_assets, cash=cash, grand_total=grand_total, hope=hope)
+        grand_total = shares_total 
+        return render_template("index.html", display_assets=display_assets, grand_total=grand_total, hope=hope)
 
     else:
         if not request.form.get("options"): #make sure to choose buy or sell
