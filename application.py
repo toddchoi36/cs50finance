@@ -52,7 +52,7 @@ def index():
     if request.method == "GET":
         assets = db.execute("SELECT * FROM assets WHERE userid =:userID ORDER BY symbol", {"userID": session["user_id"]}).fetchall()
         user_cash = db.execute("SELECT cash FROM users WHERE id =:id", {"id": session["user_id"]}).fetchall()
-        cash = int(user_cash)
+        cash = int(''.join(user_cash))
 
         display_assets = []
         shares_total = 0
