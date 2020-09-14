@@ -156,14 +156,14 @@ def buy():
         if Stock == None:
             return apology("That Stock Symbol does not exist", 403)
 
-        rows = db.execute("SELECT cash FROM users WHERE id=:id", id=session["user_id"]).fetchall
+        rows = db.execute("SELECT cash FROM users WHERE id=:id", {"id": session["user_id"]).fetchall
 
         cash = rows[0]["cash"]
         new_cash = cash - float(request.form.get("shares")) * float(Stock["price"])
         if new_cash < 0:
             return apology("not enough money", 403)
 
-        db.execute("UPDATE users SET cash =:new_cash WHERE id=:id", new_cash = new_cash, id=session["user_id"])
+        db.execute("UPDATE users SET cash =:new_cash WHERE id=:id", {"new_cash" = new_cash, "id"=session["user_id"]})
         db.commit()
 
         assetrow = db.execute("SELECT * FROM assets WHERE userID=:userID AND Symbol=:Symbol", userID=session["user_id"], Symbol=Symbol)
