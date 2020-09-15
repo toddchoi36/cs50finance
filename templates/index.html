@@ -33,8 +33,8 @@
                     <td>{{ row.Symbol }}</td>
                     <td>{{ row.CompanyName }}</td>
                     <td>{{ row.Shares }}</td>
-                    <td>{{ row.Price }}</td>
-                    <td>{{ row.Total }}</td>
+                    <td>{{ usd(row.Price) | usd}}</td>
+                    <td>{{ row.Total | usd}}</td>
                     <td>
                         <input autocomplete="off" autofocus class="form-control" name="buy_sell_qty" value="0" placeholder="Qty" type="text" style="width:60px">
                     </td>
@@ -45,7 +45,7 @@
                 <td></td>
                 <td></td>
                 <td></td>
-                <td>{{ cash }}</td>
+                <td>{{ cash | usd }}</td>
             </tbody>
 
             <tfoot>
@@ -53,7 +53,7 @@
                 <td></td>
                 <td></td>
                 <td></td>
-                <td style='font-weight: bold;'>{{ grand_total }}</td>
+                <td style='font-weight: bold;'>{{ grand_total | usd }}</td>
                 <td><button class="btn btn-primary" type="submit">Transact</button></td>
             </tfoot>
         </table>
