@@ -345,7 +345,7 @@ def sell():
         if Stock == None:
             return apology("That Stock Symbol does not exist", 403)
 
-        user_cash = db.execute("SELECT cash FROM users WHERE id=:id", id=session["user_id"])
+        user_cash = db.execute("SELECT cash FROM users WHERE id=:id", {"id": session["user_id"]})
         for row in user_cash:
             cash = row[0]
 
