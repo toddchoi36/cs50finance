@@ -351,7 +351,7 @@ def sell():
 
         assetrows = db.execute("SELECT Shares FROM assets WHERE userID=:userID AND Symbol=:Symbol", {"userID": session["user_id"], "Symbol": Symbol})
         for row in assetrows:
-            shares = rows[0]
+            shares = row[0]
         if assetrow.rowcount == 0: #if not in assets table, then add
             if shares < float(request.form.get("shares")): #if not in asset table or not enough then stop
                 return apology("You Do Not Have Enough Shares of This Stock")
