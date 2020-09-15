@@ -350,9 +350,12 @@ def sell():
             cash = row[0]
 
         assetrows = db.execute("SELECT Shares FROM assets WHERE userID=:userID AND Symbol=:Symbol", {"userID": session["user_id"], "Symbol": Symbol})
-        if len(assetrows) == 0 or float(assetrows[0]["Shares"]) < float(request.form.get("shares")): #if not in asset table or not enough then stop
-            return apology("You Do Not Have Enough Shares of This Stock")
-        elif float(assetrows[0]["Shares"]) == float(request.form.get("shares")): #if selling last share, then remove it from table
+        for row in assetrows:
+            shares = rows[0]
+        if assetrow.rowcount == 0: #if not in assets table, then add
+            if shares < float(request.form.get("shares")): #if not in asset table or not enough then stop
+                return apology("You Do Not Have Enough Shares of This Stock")
+        elif shares == float(request.form.get("shares")): #if selling last share, then remove it from table
             new_cash = cash + float(request.form.get("shares")) * float(Stock["price"])
             db.execute("UPDATE users SET cash =:new_cash WHERE id=:id", {"new_cash": new_cash, "id": session["user_id"]})
             db.execute("DELETE FROM assets WHERE userID=:id AND Symbol=:Symbol", {"id": session["user_id"], "Symbol": Symbol})
