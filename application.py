@@ -78,31 +78,31 @@ def index():
 
         option = request.form['options']
         if option =="buy":
-            assets = db.execute("SELECT Symbol FROM assets WHERE userID =:userID ORDER BY symbol", userID=session["user_id"])
+            assets = db.execute("SELECT Symbol FROM assets WHERE userID =:userID ORDER BY symbol", "userID": session["user_id"])
             a = 0 #initalize buy share getlist
             for row in assets:
                 Symbol = row["Symbol"]
                 Stock = lookup(Symbol)
                 buy_share = float(request.form.getlist("buy_sell_qty")[a])
-                db.execute("UPDATE assets SET Shares = Shares + :buy_share, Price=:Price WHERE userID=:id AND Symbol=:symbol", buy_share = buy_share, id=session["user_id"], symbol=Symbol, Price=Stock["price"])
+                db.execute("UPDATE assets SET Shares = Shares + :buy_share, Price=:Price WHERE userID=:id AND Symbol=:symbol", "buy_share": buy_share, "id": session["user_id"], "symbol": Symbol, "Price": Stock["price"])
 
-                rows = db.execute("SELECT cash FROM users WHERE id=:id", id=session["user_id"])
+                rows = db.execute("SELECT cash FROM users WHERE id=:id", "id": session["user_id"])
                 cash = rows[0]["cash"]
                 new_cash = cash - buy_share * float(Stock["price"])
                 if new_cash < 0:
                     return apology("not enough money", 403)
-                db.execute("UPDATE users SET cash =:new_cash WHERE id=:id", new_cash = new_cash, id=session["user_id"])
+                db.execute("UPDATE users SET cash =:new_cash WHERE id=:id", "new_cash": new_cash, "id": session["user_id"])
                 db.commit()
 
                 if buy_share != 0: #only add to history if buy qty is not 0
-                    db.execute("INSERT INTO history (user_ID, Symbol, Shares, Price) VALUES(:userID, :Symbol, :buy_share, :Price)", userID=session["user_id"], Symbol=Symbol, buy_share=buy_share, Price=Stock["price"])
+                    db.execute("INSERT INTO history (user_ID, Symbol, Shares, Price) VALUES(:userID, :Symbol, :buy_share, :Price)", "userID": session["user_id"], "Symbol": Symbol, "buy_share": buy_share, "Price": Stock["price"])
                     db.commit()
                 a = a + 1 #increment row
 
             return redirect("/")
 
         elif option =="sell":
-            assets = db.execute("SELECT * FROM assets WHERE userID =:userID ORDER BY symbol", userID=session["user_id"])
+            assets = db.execute("SELECT * FROM assets WHERE userID =:userID ORDER BY symbol", "userID": session["user_id"])
             a = 0 #initalize buy share getlist
             for row in assets:
                 Symbol = row["Symbol"]
@@ -112,21 +112,21 @@ def index():
                 if Shares < sell_share:
                     return apology("not enough shares")
                 elif Shares == sell_share:
-                    db.execute("UPDATE assets SET Shares = Shares - :sell_share, Price=:Price WHERE userID=:id AND Symbol=:symbol", sell_share = sell_share, id=session["user_id"], symbol=Symbol, Price=Stock["price"])
-                    db.execute("DELETE FROM assets WHERE userID=:id AND Symbol=:Symbol", id=session["user_id"], Symbol=Symbol)
+                    db.execute("UPDATE assets SET Shares = Shares - :sell_share, Price=:Price WHERE userID=:id AND Symbol=:symbol", "sell_share": sell_share, "id": session["user_id"], "symbol":Symbol, "Price":Stock["price"])
+                    db.execute("DELETE FROM assets WHERE userID=:id AND Symbol=:Symbol", "id": session["user_id"], "Symbol":Symbol)
                     db.commit()
                 else:
-                    db.execute("UPDATE assets SET Shares = Shares - :sell_share, Price=:Price WHERE userID=:id AND Symbol=:symbol", sell_share = sell_share, id=session["user_id"], symbol=Symbol, Price=Stock["price"])
+                    db.execute("UPDATE assets SET Shares = Shares - :sell_share, Price=:Price WHERE userID=:id AND Symbol=:symbol", "sell_share": sell_share, "id": session["user_id"], "symbol":Symbol, "Price":Stock["price"])
                     db.commit()
 
-                rows = db.execute("SELECT cash FROM users WHERE id=:id", id=session["user_id"])
+                rows = db.execute("SELECT cash FROM users WHERE id=:id", "id": session["user_id"])
                 cash = rows[0]["cash"]
                 new_cash = cash + sell_share * float(Stock["price"])
 
-                db.execute("UPDATE users SET cash =:new_cash WHERE id=:id", new_cash = new_cash, id=session["user_id"])
+                db.execute("UPDATE users SET cash =:new_cash WHERE id=:id", "new_cash": new_cash, "id": session["user_id"])
                 db.commit()
                 if sell_share != 0: #only add to history if buy qty is not 0
-                    db.execute("INSERT INTO history (user_ID, Symbol, Shares, Price) VALUES(:userID, :Symbol, :sell_share, :Price)", userID=session["user_id"], Symbol=Symbol, sell_share=0-float(sell_share), Price=Stock["price"])
+                    db.execute("INSERT INTO history (user_ID, Symbol, Shares, Price) VALUES(:userID, :Symbol, :sell_share, :Price)", "userID":session["user_id"], "Symbol": Symbol, "sell_share": 0-float(sell_share), Price=Stock["price"])
                     db.commit()
                     
                 a = a + 1 #increment to next row for getlist
@@ -185,7 +185,7 @@ def buy():
 @login_required
 def history():
     """Show history of transactions"""
-    history = db.execute("SELECT * FROM history WHERE user_ID =:userID ORDER BY Transacted", userID=session["user_id"])
+    history = db.execute("SELECT * FROM history WHERE user_ID =:userID ORDER BY Transacted", "userID": session["user_id"])
 
     display_history = []
 
@@ -346,21 +346,21 @@ def sell():
         rows = db.execute("SELECT cash FROM users WHERE id=:id", id=session["user_id"])
         cash = rows[0]["cash"]
 
-        assetrows = db.execute("SELECT Shares FROM assets WHERE userID=:userID AND Symbol=:Symbol", userID=session["user_id"], Symbol=Symbol)
+        assetrows = db.execute("SELECT Shares FROM assets WHERE userID=:userID AND Symbol=:Symbol", "userID": session["user_id"], "Symbol": Symbol)
         if len(assetrows) == 0 or float(assetrows[0]["Shares"]) < float(request.form.get("shares")): #if not in asset table or not enough then stop
             return apology("You Do Not Have Enough Shares of This Stock")
         elif float(assetrows[0]["Shares"]) == float(request.form.get("shares")): #if selling last share, then remove it from table
             new_cash = cash + float(request.form.get("shares")) * float(Stock["price"])
-            db.execute("UPDATE users SET cash =:new_cash WHERE id=:id", new_cash = new_cash, id=session["user_id"])
-            db.execute("DELETE FROM assets WHERE userID=:id AND Symbol=:Symbol", id=session["user_id"], Symbol=Symbol)
-            db.execute("INSERT INTO history (user_ID, Symbol, Shares, Price) VALUES(:userID, :Symbol, :Shares, :Price)", userID=session["user_id"], Symbol=Symbol, Shares=0-float(request.form.get("shares")), Price=Stock["price"])
+            db.execute("UPDATE users SET cash =:new_cash WHERE id=:id", "new_cash":  new_cash, "id": session["user_id"])
+            db.execute("DELETE FROM assets WHERE userID=:id AND Symbol=:Symbol", "id": session["user_id"], "Symbol": Symbol)
+            db.execute("INSERT INTO history (user_ID, Symbol, Shares, Price) VALUES(:userID, :Symbol, :Shares, :Price)", "userID": session["user_id"], "Symbol": Symbol, "Shares": 0-float(request.form.get("shares")), "Price": Stock["price"])
             db.commit()
             return redirect("/")
         else:
             new_cash = cash + float(request.form.get("shares")) * float(Stock["price"]) #if not selling last share, then update Shares Column
-            db.execute("UPDATE users SET cash =:new_cash WHERE id=:id", new_cash = new_cash, id=session["user_id"])
-            db.execute("UPDATE assets SET Shares = Shares - :new_shares, Price=:Price WHERE userID=:id AND Symbol=:Symbol", new_shares = request.form.get("shares"), id=session["user_id"], Symbol=Symbol, Price=Stock["price"])
-            db.execute("INSERT INTO history (user_ID, Symbol, Shares, Price) VALUES(:userID, :Symbol, :Shares, :Price)", userID=session["user_id"], Symbol=Symbol, Shares=0-float(request.form.get("shares")), Price=Stock["price"])
+            db.execute("UPDATE users SET cash =:new_cash WHERE id=:id", "new_cash": new_cash, "id": session["user_id"])
+            db.execute("UPDATE assets SET Shares = Shares - :new_shares, Price=:Price WHERE userID=:id AND Symbol=:Symbol", "new_shares": request.form.get("shares"), "id": session["user_id"], "Symbol": Symbol, "Price": Stock["price"])
+            db.execute("INSERT INTO history (user_ID, Symbol, Shares, Price) VALUES(:userID, :Symbol, :Shares, :Price)", "userID": session["user_id"], "Symbol": Symbol, "Shares": 0-float(request.form.get("shares")), "Price": Stock["price"])
             db.commit()
             return redirect("/")
 
