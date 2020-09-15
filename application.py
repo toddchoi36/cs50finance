@@ -69,7 +69,7 @@ def index():
             shares_total = shares_total + Total #total of all shares in the table... to be added with cash to generate grand total
             display_assets.append({'Symbol':Symbol, 'CompanyName':Name, 'Shares':Shares, 'Price':Price, 'Total':Total})
 
-        grand_total = shares_total + cash
+        grand_total = shares_total + int(cash)
         return render_template("index.html", display_assets=display_assets, cash=cash, grand_total=grand_total, hope=hope)
 
     else:

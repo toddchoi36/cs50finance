@@ -40,7 +40,7 @@
                     <td>{{ row.Symbol }}</td>
                     <td>{{ row.CompanyName }}</td>
                     <td>{{ row.Shares }}</td>
-                    <td>{{ row.Price | usd}}</td>
+                    <td>{{ numUSD.format(row.Price) | usd}}</td>
                     <td>{{ row.Total | usd}}</td>
                     <td>
                         <input autocomplete="off" autofocus class="form-control" name="buy_sell_qty" value="0" placeholder="Qty" type="text" style="width:60px">
