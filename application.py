@@ -126,7 +126,7 @@ def index():
                 db.execute("UPDATE users SET cash =:new_cash WHERE id=:id", {"new_cash": new_cash, "id": session["user_id"]})
                 db.commit()
                 if sell_share != 0: #only add to history if buy qty is not 0
-                    db.execute("INSERT INTO history (user_ID, Symbol, Shares, Price) VALUES(:userID, :Symbol, :sell_share, :Price)", {"userID":session["user_id"], "Symbol": Symbol, "sell_share": 0-float(sell_share), Price=Stock["price"]})
+                    db.execute("INSERT INTO history (user_ID, Symbol, Shares, Price) VALUES(:userID, :Symbol, :sell_share, :Price)", {"userID":session["user_id"], "Symbol": Symbol, "sell_share": 0-float(sell_share), "Price": Stock["price"]})
                     db.commit()
                     
                 a = a + 1 #increment to next row for getlist
