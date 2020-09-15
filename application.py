@@ -81,13 +81,14 @@ def index():
             assets = db.execute("SELECT Symbol FROM assets WHERE userID =:userID ORDER BY symbol", {"userID": session["user_id"]})
             a = 0 #initalize buy share getlist
             for row in assets:
-                Symbol = row["Symbol"]
+                Symbol = row["symbol"]
                 Stock = lookup(Symbol)
                 buy_share = float(request.form.getlist("buy_sell_qty")[a])
                 db.execute("UPDATE assets SET Shares = Shares + :buy_share, Price=:Price WHERE userID=:id AND Symbol=:symbol", {"buy_share": buy_share, "id": session["user_id"], "symbol": Symbol, "Price": Stock["price"]})
 
-                rows = db.execute("SELECT cash FROM users WHERE id=:id", {"id": session["user_id"]})
-                cash = rows[0]["cash"]
+                user_cash = db.execute("SELECT cash FROM users WHERE id=:id", {"id": session["user_id"]})
+                for row in user_cash:
+                    cash = row[0]
                 new_cash = cash - buy_share * float(Stock["price"])
                 if new_cash < 0:
                     return apology("not enough money", 403)
@@ -105,8 +106,8 @@ def index():
             assets = db.execute("SELECT * FROM assets WHERE userID =:userID ORDER BY symbol", {"userID": session["user_id"]})
             a = 0 #initalize buy share getlist
             for row in assets:
-                Symbol = row["Symbol"]
-                Shares = row["Shares"]
+                Symbol = row["symbol"]
+                Shares = row["shares"]
                 Stock = lookup(Symbol)
                 sell_share = float(request.form.getlist("buy_sell_qty")[a])
                 if Shares < sell_share:
@@ -119,8 +120,9 @@ def index():
                     db.execute("UPDATE assets SET Shares = Shares - :sell_share, Price=:Price WHERE userID=:id AND Symbol=:symbol", {"sell_share": sell_share, "id": session["user_id"], "symbol":Symbol, "Price":Stock["price"]})
                     db.commit()
 
-                rows = db.execute("SELECT cash FROM users WHERE id=:id", {"id": session["user_id"]})
-                cash = rows[0]["cash"]
+                user_cash = db.execute("SELECT cash FROM users WHERE id=:id", {"id": session["user_id"]})
+                for row in user_cash:
+                    cash = row[0]
                 new_cash = cash + sell_share * float(Stock["price"])
 
                 db.execute("UPDATE users SET cash =:new_cash WHERE id=:id", {"new_cash": new_cash, "id": session["user_id"]})
@@ -190,10 +192,10 @@ def history():
     display_history = []
 
     for row in history:
-        Symbol = row["Symbol"]
-        Shares = row["Shares"]
-        Price = row["Price"]
-        Transacted = row["Transacted"] #Total column of table for each stock
+        Symbol = row["symbol"]
+        Shares = row["shares"]
+        Price = row["price"]
+        Transacted = row["transacted"] #Total column of table for each stock
 
         display_history.append({'Symbol':Symbol, 'Shares':Shares, 'Price':Price, 'Transacted':Transacted})
 
@@ -343,8 +345,9 @@ def sell():
         if Stock == None:
             return apology("That Stock Symbol does not exist", 403)
 
-        rows = db.execute("SELECT cash FROM users WHERE id=:id", id=session["user_id"])
-        cash = rows[0]["cash"]
+        user_cash = db.execute("SELECT cash FROM users WHERE id=:id", id=session["user_id"])
+        for row in user_cash:
+            cash = row[0]
 
         assetrows = db.execute("SELECT Shares FROM assets WHERE userID=:userID AND Symbol=:Symbol", {"userID": session["user_id"], "Symbol": Symbol})
         if len(assetrows) == 0 or float(assetrows[0]["Shares"]) < float(request.form.get("shares")): #if not in asset table or not enough then stop
