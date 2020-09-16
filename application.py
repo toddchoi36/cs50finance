@@ -83,13 +83,13 @@ def index():
             for row in assets:
                 Symbol = row["symbol"]
                 Stock = lookup(Symbol)
-                buy_share = float(request.form.getlist("buy_sell_qty")[a])
+                buy_share = request.form.getlist("buy_sell_qty")[a]
                 db.execute("UPDATE assets SET Shares = Shares + :buy_share, Price=:Price WHERE userID=:id AND Symbol=:symbol", {"buy_share": buy_share, "id": session["user_id"], "symbol": Symbol, "Price": Stock["price"]})
 
                 user_cash = db.execute("SELECT cash FROM users WHERE id=:id", {"id": session["user_id"]})
                 for row in user_cash:
                     cash = row[0]
-                new_cash = cash - buy_share * float(Stock["price"])
+                new_cash = cash - buy_share * Stock["price"]
                 if new_cash < 0:
                     return apology("not enough money", 403)
                 db.execute("UPDATE users SET cash =:new_cash WHERE id=:id", {"new_cash": new_cash, "id": session["user_id"]})
