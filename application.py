@@ -109,7 +109,7 @@ def index():
                 Symbol = row["symbol"]
                 Shares = row["shares"]
                 Stock = lookup(Symbol)
-                sell_share = float(request.form.getlist("buy_sell_qty")[a])
+                sell_share = int(request.form.getlist("buy_sell_qty")[a])
                 if Shares < sell_share:
                     return apology("not enough shares")
                 elif Shares == sell_share:
@@ -123,7 +123,7 @@ def index():
                 user_cash = db.execute("SELECT cash FROM users WHERE id=:id", {"id": session["user_id"]})
                 for row in user_cash:
                     cash = row[0]
-                new_cash = cash + sell_share * float(Stock["price"])
+                new_cash = cash + sell_share * int(Stock["price"])
 
                 db.execute("UPDATE users SET cash =:new_cash WHERE id=:id", {"new_cash": new_cash, "id": session["user_id"]})
                 db.commit()
