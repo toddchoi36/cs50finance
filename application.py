@@ -162,7 +162,7 @@ def buy():
         for row in user_cash:
             cash = row[0]
         
-        new_cash = cash - float(request.form.get("shares")) * float(Stock["price"])
+        new_cash = cash - int(request.form.get("shares")) * int(Stock["price"])
         if new_cash < 0:
             return apology("not enough money", 403)
 
@@ -355,17 +355,17 @@ def sell():
             
         if assetrows.rowcount == 0: #if not in assets table, then add
             return apology("You Do Not Have Enough Shares of This Stock")
-        elif selling_shares < float(request.form.get("shares")): #if not in asset table or not enough then stop
+        elif selling_shares < int(request.form.get("shares")): #if not in asset table or not enough then stop
             return apology("You Do Not Have Enough Shares of This Stock")
-        elif selling_shares == float(request.form.get("shares")): #if selling last share, then remove it from table
-            new_cash = cash + float(request.form.get("shares")) * float(Stock["price"])
+        elif selling_shares == int(request.form.get("shares")): #if selling last share, then remove it from table
+            new_cash = cash + int(request.form.get("shares")) * int(Stock["price"])
             db.execute("UPDATE users SET cash =:new_cash WHERE id=:id", {"new_cash": new_cash, "id": session["user_id"]})
             db.execute("DELETE FROM assets WHERE userID=:id AND Symbol=:Symbol", {"id": session["user_id"], "Symbol": Symbol})
             db.execute("INSERT INTO history (user_ID, Symbol, Shares, Price) VALUES(:userID, :Symbol, :Shares, :Price)", {"userID": session["user_id"], "Symbol": Symbol, "Shares": 0-float(request.form.get("shares")), "Price": Stock["price"]})
             db.commit()
             return redirect("/")
         else:
-            new_cash = cash + float(request.form.get("shares")) * float(Stock["price"]) #if not selling last share, then update Shares Column
+            new_cash = cash + int(request.form.get("shares")) * int(Stock["price"]) #if not selling last share, then update Shares Column
             db.execute("UPDATE users SET cash =:new_cash WHERE id=:id", {"new_cash": new_cash, "id": session["user_id"]})
             db.execute("UPDATE assets SET Shares = Shares - :new_shares, Price=:Price WHERE userID=:id AND Symbol=:Symbol", {"new_shares": request.form.get("shares"), "id": session["user_id"], "Symbol": Symbol, "Price": Stock["price"]})
             db.execute("INSERT INTO history (user_ID, Symbol, Shares, Price) VALUES(:userID, :Symbol, :Shares, :Price)", {"userID": session["user_id"], "Symbol": Symbol, "Shares": 0-float(request.form.get("shares")), "Price": Stock["price"]})
